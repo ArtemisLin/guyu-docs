@@ -7,6 +7,7 @@
 ## 当前文档
 
 - [如何用 AI 分析微信聊天记录](./wechat-analysis-for-agent.md)
+- [Obsidian + AI Code 个人知识库搭建指南](./obsidian-knowledge-base-setup.md)
 
 ## 公众号
 
