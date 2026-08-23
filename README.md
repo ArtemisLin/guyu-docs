@@ -8,6 +8,7 @@
 
 - [如何用 AI 分析微信聊天记录](./wechat-analysis-for-agent.md)
 - [Obsidian + AI Code 个人知识库搭建指南](./obsidian-knowledge-base-setup.md)
+- [Claude 账号环境配置](./claude-account-setup-for-agent.md)
 
 ## 公众号
 
