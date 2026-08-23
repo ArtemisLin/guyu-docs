@@ -34,9 +34,11 @@
 
 打开 System Settings → General → Language & Region，把 English 排在首位，地区选 United States。改完按提示重新登录或重启。
 
-### 关闭系统自带的 IP 隐藏
+### 关掉 Apple 自带的 IP 中继
 
-以下三项全部关掉——它们会把流量走 Apple 的中继出口，盖掉你买的那个美国 IP：
+用户的真实 IP 由第三步买的代理来隐藏，不要让 Apple 的中继插进来抢这个活。两套同时开着，Apple 会接管 Safari 流量、绕过 Clash 的分流规则——买来的美国住宅 IP 一次都用不上，Claude 看到的是 Apple 中继的数据中心 IP，而且那个出口还会变。
+
+以下三项全部关掉：
 
 - **System Settings → Network → Wi-Fi → Details…**，关闭 **Limit IP Address Tracking**（限制 IP 地址追踪）。这是按网络单独生效的，常用的每个 Wi-Fi 和有线网络都要关一遍。
 - **System Settings → 顶部 Apple 账户名 → iCloud → Private Relay**（私密中继），关闭。中国大陆区 Apple 账户没有这个功能，看不到就跳过。
@@ -149,6 +151,8 @@ Clash Verge 切到 **Rule** 模式并打开系统代理——Global / Direct 不
 
 先不要开 TUN，用系统代理测网页端；确认节点支持 UDP 后再开。
 
+开 TUN 之前，先让用户去 `chrome://settings/security` 关掉 **Use secure DNS**。Chrome 的加密 DNS 会绕过系统 DNS，TUN 模式靠拦截 DNS 做 fake-IP 映射，两者冲突会导致分流规则匹配不上。系统代理模式下不受影响，不必提前关。
+
 ## 第五步：先验证，再登录
 
 ### 验证代理节点
@@ -165,7 +169,14 @@ curl --socks5-hostname YOUR_PROXY_SERVER:YOUR_PROXY_PORT \
 
 ### 验证命中规则
 
-在 Clash Verge 的连接日志里访问 Claude，确认请求命中 `Claude-US-Residential`。命中别的节点就依次查：是不是 Rule 模式、脚本是否已重载生效、节点名和规则末尾是否一致、原订阅规则是不是排到了前面。
+上面两步只证明了代理本身可用，没有证明用户**日常浏览器访问 Claude 时**走的是这条线。必须再实测一次：
+
+1. 让用户用他平时上网的那个浏览器（Chrome、Edge、Arc 等，不是 Safari，也不是 curl）打开 `claude.ai`。
+2. 立刻回到 Clash Verge 的连接日志，找到这条请求，确认它命中的是 `Claude-US-Residential`。
+
+日志是唯一的实证。`curl` 是显式指定走 socks5 的，`ipinfo.io` 也不是要保护的域名，这两个都测不出浏览器访问 Claude 的真实路径。
+
+命中别的节点，或者日志里根本找不到这条请求，就依次查：是不是 Rule 模式、脚本是否已重载生效、节点名和规则末尾是否一致、原订阅规则是不是排到了前面。
 
 ## 第六步：登录与日常使用
 
